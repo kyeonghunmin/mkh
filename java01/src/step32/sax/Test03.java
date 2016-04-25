@@ -56,6 +56,10 @@ public class Test03 {
     
     XMLReader xmlReader = saxParser.getXMLReader();
    
+    // 콘텐츠 핸들러 등록하기
+    // => XMLReader는 xml 파일에서 태그나 속성을 읽을 때 마다 
+    //    콘텐츠 핸들러의 메서드를 호출한다.
+    // => 만약 콘텐츠 핸들러가 등록되어 있지 않다면 아무런 일도 하지 않는다.
     xmlReader.setContentHandler(new BookHandler());
     
     xmlReader.parse(convertToFileURL("./sample.xml"));

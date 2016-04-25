@@ -23,6 +23,7 @@ create table test01(
 alter table test01
   add constraint test01_pk primary key (tno);
 
+  /* auto_increment는 키 컬럼에 대해 지정할 수 있다.*/
 alter table test01
   modify column tno int not null auto_increment;
 

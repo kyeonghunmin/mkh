@@ -14,7 +14,7 @@ create table test01(
 
 1. 날짜 및 시간 함수
 => now() : 날짜 및 시간
-
+=> curdate() : 현재 날짜
 insert into test01 values(1,'aa@test.com','aa','ok',18,now());
 insert into test01 values(2,'bb@test.com','bb','ok',19,curdate());
 insert into test01 values(3,'cc@test.com','cc','ok',20,'2016-2-1');
