@@ -1,16 +1,14 @@
 
 package bitcamp.pms;
 
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import bitcamp.pms.context.ApplicationContext;
 import bitcamp.pms.context.request.RequestHandler;
 import bitcamp.pms.context.request.RequestHandlerMapping;
 import bitcamp.pms.controller.AuthController;
@@ -31,27 +29,14 @@ public class ProjectApp {
   }
   
   public ProjectApp() {
-    appContext = new ApplicationContext("bitcamp.pms");
+    appContext = new ClassPathXmlApplicationContext("conf/application-context.xml");
     requestHandlerMapping = new RequestHandlerMapping(appContext);
-    appContext.addBean("stdinScan", keyScan);
-    appContext.addBean("session", session);
-    
-    try {
-      InputStream inputStream = Resources.getResourceAsStream(
-          "conf/mybatis-config.xml");
-      appContext.addBean("sqlSessionFactory", 
-          new SqlSessionFactoryBuilder().build(inputStream));
-    } catch (Exception e) {
-      System.out.println("mybatis 준비 중 오류 발생!\n시스템을 종료하겠습니다.");
-      e.printStackTrace();
-      return;
-    }
   }
 
   public void run() {
     AuthController authController = 
         (AuthController)appContext.getBean(AuthController.class);
-    authController.service();
+    authController.service(keyScan, session);
     
     String input;
     do {
@@ -92,8 +77,13 @@ public class ProjectApp {
         
         for (Parameter param : params) {
           //3) 파라미터에 해당하는 객체가 ApplicationContext에 있는지 알아본다.
-          arg = appContext.getBean(param.getType());
-          
+          if (param.getType() == Scanner.class) {
+            arg = keyScan;
+          } else if (param.getType() == Session.class) {
+            arg = session;
+          } else {
+            arg = appContext.getBean(param.getType());
+          }
           //4) 찾은 값을 아규먼트 목록에 담는다. 못 찾았으면 null을 담는다.
           args.add(arg);
         }

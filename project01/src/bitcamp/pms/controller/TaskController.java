@@ -1,6 +1,8 @@
 package bitcamp.pms.controller;
 
-import bitcamp.pms.annotation.Controller;
+
+import org.springframework.stereotype.Controller;
+
 import bitcamp.pms.annotation.RequestMapping;
 
 @Controller

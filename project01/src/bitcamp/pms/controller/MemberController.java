@@ -1,9 +1,12 @@
 package bitcamp.pms.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-import bitcamp.pms.annotation.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
 import bitcamp.pms.annotation.RequestMapping;
 import bitcamp.pms.dao.MemberDao;
 import bitcamp.pms.domain.Member;
@@ -12,13 +15,8 @@ import bitcamp.pms.util.CommandUtil;
 @Controller
 @RequestMapping("member/")
 public class MemberController {
+  @Autowired
   private MemberDao memberDao;
-
-  
-  public void setMemberDao(MemberDao memberDao) {
-    this.memberDao = memberDao;
-  }
-
 
   @RequestMapping("add.do")
   public void add(Scanner keyScan) {
@@ -98,7 +96,10 @@ public class MemberController {
       System.out.print("변경할 회원 번호는? ");
       int no = Integer.parseInt(keyScan.nextLine());
   
-      Member member = memberDao.selectOne(no);
+      HashMap<String,Object> paramMap = new HashMap<>();
+      paramMap.put("no", no);
+      
+      Member member = memberDao.selectOne(paramMap);
   
       System.out.printf("이름(%s)? ", member.getName());
       member.setName(keyScan.nextLine());

@@ -3,7 +3,9 @@ package bitcamp.pms.controller;
 import java.util.List;
 import java.util.Scanner;
 
-import bitcamp.pms.annotation.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
 import bitcamp.pms.annotation.RequestMapping;
 import bitcamp.pms.dao.BoardDao;
 import bitcamp.pms.domain.Board;
@@ -12,11 +14,8 @@ import bitcamp.pms.util.CommandUtil;
 @Controller
 @RequestMapping("board/")
 public class BoardController {
+  @Autowired
   private BoardDao boardDao;
-  
-  public void setBoardDao(BoardDao boardDao) {
-    this.boardDao = boardDao;
-  }
 
   @RequestMapping("add.do")
   public void add(Scanner keyScan) {    
