@@ -30,6 +30,10 @@ step28 : JDBC, statement.
 step29 : DB 사용, 커넥션풀.
 step30 : mybatis.
 step31 : 정규표현식.
+step32 : 싱글톤 패턴, dom,sax
+step33 : 스프링 IoC 컨테이너
+step34 : socket 통신
+step35 : thread (exam03이 서로 다름!)
 */
 
 
@@ -807,7 +811,7 @@ sourceSets {
 
 * Vendor API
   - 벤더마다 API 명세가 다르다. => DBMS 별로 작성해야하는 단점. (유지보수 힘듬)
-    => ODBC(Open DataBase Connectivity) 등장 : API 명세를 통일함.  
+    => ODBC(Open DataBase Connectivity) 등장 : API 명세를 통일함.
 
 <각 호출(call) 관계>
 - JavaApp -> JDBC Driver -> 각 Vendor ODBC Driver -> 각 Vendor API(c/c++) -> DBMS
@@ -823,29 +827,29 @@ Type2 : 중간 ODBC 구간을 거치지 않고 바로 각 Vendor API(Native API)
         JRE에 포함되어 있지 않다.
         DBMS 별로 다운로드를 받아야 한다.
         속도가 빠르다.
-        
+
 Type4 : 바로 DBMS를 호출한다. (DBMS와 직접 접속)
         pure Java라고 부른다. (중간에 각 Vendor API를 거치지 않기 때문)
         DBMS 별로 다운로드가 필요하다.
         현업에서 가장 많이 사용하는 타입이다.
-        
+
 
 * DBMS 설치
 1) www.mysql.com -> [다운로드] -> APT Repository -> Ubuntu/Debian 다운로드 -> 설치
-2) www.mysql.com -> MySQL Connectors 클릭 -> Connector/J 클릭 -> 
+2) www.mysql.com -> MySQL Connectors 클릭 -> Connector/J 클릭 ->
    Platform independent -> ZIP 파일 다운로드 -> 압축 해제 -> xxx.jar 복사 ->
    workspace/java01/libs에 붙여넣기 -> eclipse에서 확인(F5)
 3) gradle 방식
-   mvnrepository.com 접속 -> mysql jdbc 검색 -> 
+   mvnrepository.com 접속 -> mysql jdbc 검색 ->
    build.gradle 파일에 dependencies 부분에 추가 ('mysql:mysql-connector-java:5.1.38')
-   -> 터미널에서 workspace/java01에서 gradle eclipse (이클립스 관련 설정파일 재설정) 
-   
+   -> 터미널에서 workspace/java01에서 gradle eclipse (이클립스 관련 설정파일 재설정)
+
 
 
 // 4.5 (화)
 * Driver --> Connection --> Statement --> ResultSet
        (준비)         (준비)        (준비)
-       
+
 com.mysql.jdbc.Driver --> com.mysql.jdbc.ConnectionImpl --> com.mysql.jdbc.StatementImpl --> com.mysql.jdbc.ResultSetImpl
                     (리턴)                            (리턴)                           (리턴)
 
@@ -928,7 +932,7 @@ BoardDao --(사용)--> sqlSession --(사용)--> SQL
 ** JDBC 프로그래밍시 auto commit으로 설정되어 있으면
    insert, update, delete 후 자동 commit이 된다.
    => auto commit을 해제하면 transaction 작업을 수행할 수 있게 된다.
-   
+
 * Transaction
 ex) 계좌이체 업무
     1) 자신의 잔액 변경
@@ -959,8 +963,8 @@ ex) 계좌이체 업무
  - trim (where, set)
  - foreach
  ==> SQL문에서 사용 가능.
- 
- 
+
+
 * Hyper-Text Markup Language (HTML)
  - FTP (File Transfer Protocol) 문제점?
    1) 논문이 참조하는 다른 논문을 다운로드가 불편
@@ -997,6 +1001,296 @@ ex) 계좌이체 업무
                    기존 C, Delphi에서 Java, HTML 등의 웹 기술로 바뀜.
     [웹의 필요성]
     신자유주의 -> 글로벌화 가속 -> 무한경쟁 -> 제품 주기 가속 -> 업무 프로세스 변경이 자주 발생
+
+
+** mysql server 5.7 -> my.ini
+
+
+
+// 4.26 (화)
+Spring IoC Container가 설정 파일을 읽어서 객체생성, 의존 객체 주입을 수행한다.
+- 도우미 객체 : PropertyEditor
+                BeanPostProcessor (빈 생성 이후에 수행)
+
+
+
+// 4.27 (수)
+* 네트워크 프로그래밍
+- 컴퓨터 간의 데이터 교환뿐 만 아니라 프로그램간의 데이터 교환도 포함한다.
+- Networking
+  1) C/S (Client/Server)
+     => 요청하는 쪽 : 클라이언트
+     => 응답하는 쪽 : 서버
+  2) 주소 (IP address[IPv4])
+  3) Port 번호
+     => 연결 구분자
+     => Client : OS가 자동부여
+     => Server : 개발자가 지정
+
+
+
+// 4. 28 (목)
+Multi-Tasking ==> Multi-Process의 실행을 관리 ==> "process scheduling"
+* process scheduling
+  - Windows : Round Robin
+              => timeout을 지정한 후 순환 실행한다.
+                 (랜덤하게 실행되지만 전체적인 실행 비율은 동일하다)
+  - Unix/Linux : Priority + Aging
+                 => 우선순위가 높은 프로세스를 먼저 실행한다.
+                    (특정 프로세스를 더 많이 실행한다)
+                    실행 도중에 더 높은 우선순위를 가진 프로스세가 있으면
+                    실행을 멈추고 높은 우선순위의 프로세스를 먼저 실행한다.
+                 => Aging : 순위가 밀릴 때마다 우선 순위를 높여주는 기법.
+
+  - 비선점형 : App이 cpu 사용권을 점유하는 방식. (Dos)
+  - 선점형   : OS가 cpu 사용권을 점유하는 방식. (Windows95 ~)
+
+  - context(실행정보) switching : 프로세스를 교환할 때마다 진행 사항을 저장/로딩하는 행위
+
+
+* Application 내에서의 Multi-Tasking 기법
+1) fork
+   - 프로세스 복제
+   - 원본 프로세스의 메모리도 함께 복제한다.
+     => 메모리 낭비가 발생한다.
+     => 안드로이드에서 App을 실행하려면 JVM 실행 : 이때 fork를 사용.
+        (JVM 1개가 App 1개를 실행한다.)
+     => 각 프로세스들은 독립적이다. (서로 영항을 주지 않음)
+
+2) thread
+   - 프로세스의 일부 코드를 분리하여 다른 프로세스처럼 독립적으로 실행한다.
+   - 하나의 프로세스에 여러 쓰레드가 붙어있는 구조.
+     => 각 쓰레드마다 stack 메모리를 가지고 있다.
+     => 프로세스의 Heap과 Method Area를 여러 쓰레드들이 공유한다.
+   - fork 방식보다 메모리를 덜 사용하는 장점이 있다.
+   - 특징 : 쓰레드는 프로세스에 종속된다.
+            프로세스가 종료되면 종속되어있는 모든 쓰레드도 함께 종료된다.
+
+과제
+1. 강사관리
+2. 강의관리
+   (강의장을 미리 Data 입력 할 것)
+3. 강의에 강사 배정
+
+
+
+// 5.2 (월)
+* tomcat 설치
+http://tomcat.apache.org/download-80.cgi (다운로드)
+다운로드 --> apache-tomcat-8.0.33 --> bin --> startup.bat (톰켓서버 실행)
+브라우저 --> localhost:8080 입력 --> 개발자 도구 --> network --> preserve log 체크 --> localhost 선택
+프록시 확인 : http://www.charlesproxy.com/latest-release/download.do (다운로드)
+
+
+* Web Application
+1. HTTP 기술을 이용하여 Client/Server App 구축
+2. 개발자가 (통신, 멀티스레드) 프로그래밍을 하지 않아도 된다.
+3. Client 프로그램 배포가 용이하다. (대부분의 OS에 기본으로 포함되어 있음)
+4. 아주 쉬운 Front-End 기술을 이용할 수 있다.
+   (HTML, JavaScript를 이용하면 쉽게 URL을 만들 수 있음)
+
+*            <HTTP 규칙>        <CGI(Common Gateway Interface) 규칙>
+HTTP Client  --(요청)--> HTTP Server  --(실행)-->  App(작업)
+            <--(응답)--              <--(결과)--
+- HTTP Client : Web browser라고 부름.
+- HTTP Server : Web Server라고 부름.
+- CGI : HTTP Server와 프로그램(App) 사이에 데이터를 주고 받는 규칙.
+  CGI 프로그램 : CGI 규칙에 따라 데이터를 주고 받도록 만든 프로그램.
+  개발자가 CGI 규칙에 따라 데이터를 다루어야 한다. (C, C++, Delphi...실행 프로그램)
+  => 변경시 마다 재컴파일 필요 (유지보수에 번거로움)
+     App에서 Interpreter로 바뀌게 된다. (PHP, Python 등)
+     interpreter --(실행)--> 명령코드
+     interpreter에 엔진에 따라 파일이 존재한다.
+     예) PHP엔진 -> .php
+         Peal엔진 -> .pl
+     장점 : 개발자가 CGI 규칙을 알 필요가 없다.
+            변경시 소스코드를 변경하면 즉시 변경내용대로 동작한다. (유지보수가 쉬움)
+     단점 : 매번 소스코드를 검사하고 분석해야 하기 때문에 속도가 느리다.
+            체계적으로 관리하는 기능이 없다. (대형 시스템에 부적합)
+
+* Java Web App Architecture
+             <HTTP 규칙>              <CGI 규칙>            <Servlet 인터페이스 규칙>
+HTTP Client  --(요청)--> HTTP Server  --(실행)-->  Web App, JVM  --(호출)-->  Java Web App; .class
+            <--(응답)--              <--(결과)--
+
+- Java Web App : 작은 단위(Servlet)의 서비스 객체들로 이루어져 있다.
+  Servlet 관리자 : Servlet Container라고 부름.
+
+- Servlet 인터페이스
+  init() : 생성시
+  serice() : 요청 마다
+  destroy() : 종료시
+  getServletInfo() : Servlet의 정보 (Servlet Container에서 관리를 위해 호출)
+  getServletConfig() : Servlet의 설정 정보 (Servlet Container에서 관리를 위해 호출)
+
+* Servlet Lifecycle
+---(실행 요청)--->  서블릿 컨테이너  ---(        )--->  서블릿 (서블릿 객체는 하나만 생성됨)
+                                     1. if (!존재)
+                                          new 서블릿()
+                                          init()
+                                     2. service() 호출
+                                     * destroy() : 웹 어플리케이션을 멈춘다.
+                                                   서블릿 컨테이너를 멈춘다.
+* 서블릿 컨테이너 vs 웹 어플리케이션 vs 서블릿
+- 서블릿 컨테이너 : 여러 웹 어플리케이션을 관리한다.
+- 웹 어플리케이션 : 여러 개의 서블릿을 담고 있다.
+
+
+*
+[project 폴더]
+pms/src/*.java, *.xml
+
+[배포 폴더]
+$Tomcat/webapps/pms/WEB-INF/web.xml : 서블릿 정보 등록
+                           /classes : 컴파일된 바이트 코드 (*.class, *.xml)
+                           /lib     : *.jar
+- /classes에 해당하는 의존 라이브러리는 반드시 /lib 안에 존재해야 한다.
+  (.classpath를 사용할 수 없다.)
+
+gradle build : /bin/*.class를 묶어서 build/libs/project01.jar형태로 만들어 준다.
+- task 추가 (의존 라이브러리를 /build/libs로 복사) (gradle copyToLib)
+- /lib 안에 그 복사된 내용을 다시 복사해서 넣어두면 배포 폴더에 의존 라이브러리를 둘 수 있다.
+
+
+
+// 5. 3 (화)
+* 톰캣 서버 실행 환경 (별도의 테스트 환경을 만들어서 사용)
+- 개발 상황
+1. 여러 고객사 유지보수
+   - 고객사가 다르더라도 웹 애플리케이션 URL은 같아야 한다.
+   - 고객사별로 톰캣서버의 실행환경을 분리한다. (유지보수를 쉽게 함)
+2. 여러 Web App을 유지보수
+   - 한 번에 한 Web App을 개발할 수 있도록 개발 환경(테스트를 위한 실행 환경)을 분리한다.
+
+* 톰캣 자동화
+** 톰캣 서버가 설치된 경로 설정
+window -> preferences -> server -> Runtime Environment -> add -> tomcat 8.0 (위치 지정)
+
+** 웹 애플리케이션 테스트를 위한 톰캣 실행 환경 구축
+Servers 뷰 클릭(new -> server) -> host name : localhost
+                               Server name : 자유 (A고객사, B고객사, C고객사...)
+                               Server runtime environment : 톰캣 8.0
+Servers 폴더(A고객사-config)가 생성된다.
+=> 톰캣 실행 환경 폴더에는 원래 톰캣 서버에 있던 설정 파일을 복사해 온 파일이 있다.
+   (이클립스에서 톰캣 서버를 실행할 때 마다 이 설정 파일을 사용한다.)
+
+C:\bitcamp\workspace\.metadata\.plugins\org.eclipse.wst.server.core  ==> 즐겨찾기 추가
+
+** 이클립스에서 실행한 톰캣 서버에 웹 애플리케이션 배포
+- 톰캣 서버가 설치된 원래의 폴더($톰캣서버/webapps)를 사용하지 않는다.
+- 대신 워크스페이스의 특정 폴더에 별도의 배포 폴더를 구축하여 사용한다.
+  C:\bitcamp\workspace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps
+- 왜 톰캣 서버가 설치된 폴더를 사용하지 않는가?
+  다양한 고객사나 웹 애플리케이션을 동시에 테스트하기 위함.
+- 이클립스에서 실행한 톰캣 서버에 웹 애플리케이션을 배포하려면
+  이클립스 규칙에 따라 웹 애플리케이션 프로젝트를 만들어야 한다.
+  File -> New -> Dynamic Web Project (Generate web.xml deployment descriptor 체크)
+
+** Dynamic Web Project 폴더 구조
+- src : 자바 소스 파일을 두는 폴더.
+- WebContent : HTML, CSS, JavaScript, 이미지 파일, JSP 파일을 두는 폴더.
+               WEB-INF 폴더도 이 폴더에 생성한다.
+
+** 웹 애플리케이션을 톰캣 실행 환경에 배치
+- 톰캣 실행 환경의 배치 폴더에 프로젝트 이름으로 하위 폴더를 생성한다.
+  예) ...\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\web02
+- WebContent 폴더에 있던 모든 파일과 디렉토리를 배치 폴더에 복사한다.
+- src 폴더에 있던 자바 파일을 컴파일하여 배치 폴더의 WEB-INF/classes 밑에 복사한다.
+- 이 모든 것을 자동으로 수행한다.
+  Servers 뷰에서 Add and Remove에서 add 후 A고객사 start
+  배치 폴더를 삭제하고 다시 만들어야할 경우 : Add and Remove에서 remove 후 Publish
+
+
+* 웹 어플리케이션 구성요소 (컴포넌트)
+1. 서블릿
+2. 필터 : 서블릿 실행 전 후로 작업이 필요할 경우 사용
+3. 리스너 : 서블릿의 특정 상태에 대한 보고를 받고 싶은 경우
+==> 각 컴포넌트를 만든 후 web.xml에 설정해야 한다!
+
+
+*
+요청 --> 서블릿 컨테이너  --(doFilter)---(doFilter)---(service)--> Servlet
+Servlet을 호출하기 전/후에 Filter를 통해 어떠한 작업을 수행할 수 있다.
+사용예) 암호 해제, 압축 풀기, 로그 남기기, 사용자 권한 검사, 사용자 인증
+        암호화, 압축하기 등..
+장점 : 언제든지 특정 기능을 추가/제거하기가 쉽다.
+       특정 URL에 대해서 적용할 수 있다.
+
+* 필터링 컴포넌트
+1. Servlet 기술 : Filter
+2. Spring 기술 : Intercepter
+3. AOP 기술
+
+
+
+// 5. 4 (수)
+*
+Decorator : 기존 기능의 추가 기능을 덧붙이는 형태.
+Chain Of Responsibility : 독립된 기능들을 연결하는 형태.
+
+
+
+// 5. 9 (월)
+* forward 방식
+  <요청>             <조건에 따라 분기>
+--------> A (서블릿) -----> B (서블릿)
+                     -----> C (서블릿)
+                     -----> D (서블릿)
+
+                     ==> B, C, D가 요청에 대한 응답을 처리. (A로 다시 돌아갈 수 없음)
+                     ==> B, C, D는 전체 작업 수행.
+
+* include 방식
+  <요청>             <요청>            <요청>            <요청>
+--------> A (서블릿) -----> B (서블릿) -----> C (서블릿) -----> D (서블릿)
+                     <-----            <-----            <-----
+                     <리턴>            <리턴>            <리턴>
+
+                     ==> B, C, D는 부분 작업 수행.
+
+
+# Java EE 기술
+- 분산 컴포넌트 기술 규약 (spec) ==> 기술 규약에 따라 서버 s/w 구현 (구현체; implementor)
+  웹 컴포넌트 기술 규약 (spec)
+  ...
+
+* Java EE 구현체 (위의 기술 규약 100% 만족)
+- JBoss
+- WebLogic
+- WebSphere
+- JEUS
+@ 웹 관련 기술 규약 구현체 (Servlet, JSP 구현체) : Tomcat, Jetty, Resin
+
+JBoss (100% 구현)
+- Web Container (Web Server)
+- Servlet Container
+- EJB Container
+
+Tomcat (웹 관련 부분만 구현)
+- Web Container (Web Server)
+- Servlet Container
+
+
+
+// 5. 10 (화)
+* 서블릿 인터페이스를 구현해야만 서블릿을 만들어낼 수 있다.
+
+* HTML 관련 책
+1) 초고속 웹 사이트 구축
+2) 모던 웹 HTML, CSS, JavaScript ...
+3) High Performance JavaScript
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

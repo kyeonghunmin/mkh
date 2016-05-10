@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="ems.dao.TeacherAssignDao">
+  <resultMap type="TeacherAssign" id="TeacherAssignMap">
+    <id     column="TANO"    property="tano"/>
+    <result column="LNO"  property="lno"/>
+    <result column="TNO"  property="tno"/>
+    <result column="ST_DT"  property="startDate"/>
+    <result column="EN_DT"    property="endDate"/>
+    <result column="DESCT"    property="description"/>
+    <result column="HR"    property="hr"/>  
+  </resultMap>
+  
+    <resultMap type="TeacherAssignTech" id="TeacherAssignTechMap">
+    <id     column="TANO"    property="tano"/>
+    <result column="LNO"  property="lno"/>
+    <result column="TNO"  property="tno"/>
+    <result column="ST_DT"  property="startDate"/>
+    <result column="EN_DT"    property="endDate"/>
+    <result column="DESCT"    property="description"/>
+    <result column="HR"    property="hr"/> 
+    <result column="TITL"    property="title"/> 
+    <result column="TNM"    property="tname"/> 
+  </resultMap>
+  
+  <insert id="insert" parameterType="TeacherAssign">
+    insert into TEA_ASSIGN(LNO,TNO)
+    values(#{lno},#{tno})
+  </insert>
+  
+  <update id="update" parameterType="TeacherAssign">
+    update TEA_ASSIGN set
+      ST_DT=#{startDate},
+      EN_DT=#{endDate},
+      DESCT=#{description},
+      HR=#{hr}
+    where TANO=#{tano}
+  </update>
+  
+  <!-- parameterType이 원시 데이터 타입일 경우, 
+      => 프로퍼티 이름은 아무거나 넣어도 된다.
+   -->
+  <delete id="delete" parameterType="int">
+    delete from TEA_ASSIGN
+    where TANO=#{no}
+  </delete>
+ 
+  <select id="selectList" resultMap="TeacherAssignTechMap">
+    select TANO, TITL, TNM, TA.ST_DT, TA.EN_DT, T.TNO, TA.TNO, L.LNO, TA.LNO, TA.DESCT
+    from TEA_ASSIGN TA
+    	 left outer join TEACHS T ON TA.TNO = T.TNO 
+   		 left outer join LECTS L ON TA.LNO = L.LNO
+  </select>
+  
+  <select id="selectOne" parameterType="int" resultMap="TeacherAssignMap">
+   select TANO, TITL, TNM, TA.ST_DT, TA.EN_DT, T.TNO, TA.TNO, L.LNO, TA.LNO
+    from TEA_ASSIGN TA
+    	 left outer join TEACHS T ON TA.TNO = T.TNO 
+   		 left outer join LECTS L ON TA.LNO = L.LNO
+    where TANO=#{no}
+  </select>
+</mapper>
