@@ -1,3 +1,6 @@
+/* 용도
+=> 명령어를 처리할 메서드와 객체 주소를 보관한다.
+ */
 package bitcamp.pms.context.request;
 
 import java.lang.reflect.Method;
