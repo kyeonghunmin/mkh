@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="bitcamp.pms.dao.TeacherDao">
+  <sql id="select01">
+    select TNO, TNM, EMAIL, TEL, PHOT
+    from TEACHS
+  </sql>
+
+  <resultMap type="Teacher" id="TeacherMap">
+    <id     column="TNO"    property="tno"/>
+    <result column="TNM"  property="name"/>    
+    <result column="TEL"    property="tel"/>
+    <result column="EMAIL"  property="email"/>
+  </resultMap>
+  
+  <insert id="insert" parameterType="Teacher">
+    insert into TEACHS(TNM,EMAIL,TEL)
+    values(#{name},#{email},#{tel})
+  </insert>
+  
+  <update id="update" parameterType="Teacher">
+    update TEACHS set
+      TNM=#{name},
+      EMAIL=#{email},
+      TEL=#{tel}
+    where TNO=#{tno}
+  </update>
+  
+  <delete id="delete" parameterType="int">
+    delete from TEACHS
+    where TNO=#{tno}
+  </delete>
+
+  <select id="selectList" resultMap="TeacherMap">
+    <include refid="select01"/>
+    order by TNM asc
+  </select>
+  
+  <select id="selectOne" parameterType="map" resultMap="TeacherMap">
+    <include refid="select01"/>
+    where 
+    <if test="tno != null">
+      TNO=#{tno}
+    </if>
+    <if test="email != null">
+      EMAIL=#{email}
+    </if>
+  </select>
+  
+  <!-- 
+  <select id="isTeacher" parameterType="map" resultType="int">
+    select count(*) 
+    from TEACHS
+    where EMAIL=#{email} and TEL=#{tel}
+  </select>
+   -->
+   
+</mapper>

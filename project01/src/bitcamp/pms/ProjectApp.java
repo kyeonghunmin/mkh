@@ -11,9 +11,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import bitcamp.pms.context.request.RequestHandler;
 import bitcamp.pms.context.request.RequestHandlerMapping;
-import bitcamp.pms.controller.AuthController;
 import bitcamp.pms.util.Session;
-
 
 //=> 정리!
 // static 필드나 메서드를 인스턴스 필드와 메서드로 전환한다.
@@ -29,14 +27,13 @@ public class ProjectApp {
   }
   
   public ProjectApp() {
-    appContext = new ClassPathXmlApplicationContext("conf/application-context.xml");
+    appContext = new ClassPathXmlApplicationContext(
+        "conf/application-context.xml");
     requestHandlerMapping = new RequestHandlerMapping(appContext);
   }
 
   public void run() {
-    AuthController authController = 
-        (AuthController)appContext.getBean(AuthController.class);
-    authController.service(keyScan, session);
+
     
     String input;
     do {
@@ -84,6 +81,7 @@ public class ProjectApp {
           } else {
             arg = appContext.getBean(param.getType());
           }
+          
           //4) 찾은 값을 아규먼트 목록에 담는다. 못 찾았으면 null을 담는다.
           args.add(arg);
         }
